@@ -16,6 +16,14 @@ function getFinanceAdvice(dep, rec) {
   return a
 }
 
+/* ================= FORMAT DATE ================= */
+function formatDate(date) {
+  const d = new Date(date)
+  return `${d.getDate().toString().padStart(2, '0')}/${
+    (d.getMonth() + 1).toString().padStart(2, '0')
+  }/${d.getFullYear()}`
+}
+
 export default function App() {
 
   const [user, setUser] = useState(null)
@@ -83,6 +91,12 @@ export default function App() {
     load()
   }
 
+  /* ================= LOGOUT ================= */
+  async function logout() {
+    await supabase.auth.signOut()
+    setUser(null)
+  }
+
   /* ================= CALC ================= */
   const dep = transactions.filter(t => t.type === 'depense')
   const rec = transactions.filter(t => t.type === 'recette')
@@ -109,13 +123,19 @@ export default function App() {
       {/* TOP BAR */}
       <div className="topbar">
         <div>
-          <h3>💰 Finance AI</h3>
+          <h3>💰 Finance </h3>
           <small>{user.email}</small>
         </div>
 
-        <button onClick={() => setDark(!dark)} className="icon-btn">
-          {dark ? "☀️" : "🌙"}
-        </button>
+        <div>
+          <button onClick={() => setDark(!dark)} className="icon-btn">
+            {dark ? "☀️" : "🌙"}
+          </button>
+
+          <button onClick={logout} className="logout-btn">
+            🚪
+          </button>
+        </div>
       </div>
 
       {/* CONTENT */}
@@ -126,11 +146,11 @@ export default function App() {
           <>
             <div className="card big-card">
               <h5>Solde actuel</h5>
-              <h1>{solde.toLocaleString()} €</h1>
+              <h1>{solde.toLocaleString()} FCFA</h1>
             </div>
 
             <div className="card">
-              <h5>🧠 Analyse IA</h5>
+              <h5>🧠 Analyse </h5>
               {advice.map((a, i) => (
                 <p key={i}>• {a}</p>
               ))}
@@ -139,12 +159,12 @@ export default function App() {
             <div className="grid">
               <div className="card small">
                 <h6>Recettes</h6>
-                <b className="green">{totalRec} €</b>
+                <b className="green">{totalRec} FCFA</b>
               </div>
 
               <div className="card small">
                 <h6>Dépenses</h6>
-                <b className="red">{totalDep} €</b>
+                <b className="red">{totalDep} FCFA</b>
               </div>
             </div>
 
@@ -172,11 +192,14 @@ export default function App() {
               <div key={t.id} className="tx">
                 <div>
                   <b>{t.label}</b>
+                  <div className="meta">
+                    {t.type} • {formatDate(t.created_at)}
+                  </div>
                 </div>
 
                 <div>
                   <span className={t.type}>
-                    {t.montant} €
+                    {t.montant} FCFA
                   </span>
 
                   <button onClick={() => remove(t.id)}>🗑️</button>
@@ -219,109 +242,200 @@ export default function App() {
       </div>
 
       {/* STYLE */}
-      <style>{`
-        .app{
-          font-family: sans-serif;
-          background:#f4f6fb;
-          min-height:100vh;
-          color:#111;
-        }
+     <style>{`
+.app{
+  font-family: 'Inter', sans-serif;
+  background:#f4f6fb;
+  min-height:100vh;
+  color:#111;
+}
 
-        .dark{
-          background:#0f172a;
-          color:white;
-        }
+.dark{
+  background:#0f172a;
+  color:#e2e8f0;
+}
 
-        .topbar{
-          display:flex;
-          justify-content:space-between;
-          padding:15px;
-        }
+/* TOPBAR */
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:15px;
+}
 
-        .content{
-          padding:15px;
-          padding-bottom:80px;
-        }
+.topbar h3{
+  margin:0;
+}
 
-        .card{
-          background:white;
-          padding:15px;
-          border-radius:16px;
-          margin-bottom:12px;
-          box-shadow:0 5px 15px rgba(0,0,0,0.05);
-        }
+/* CONTENT */
+.content{
+  padding:15px;
+  padding-bottom:90px;
+}
 
-        .dark .card{
-          background:#1e293b;
-        }
+/* CARD */
+.card{
+  background:white;
+  padding:18px;
+  border-radius:18px;
+  margin-bottom:15px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.06);
+}
 
-        .big-card h1{
-          font-size:32px;
-        }
+.dark .card{
+  background:#1e293b;
+  box-shadow:none;
+}
 
-        .grid{
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          gap:10px;
-        }
+/* BIG CARD */
+.big-card{
+  text-align:center;
+}
 
-        .small{
-          text-align:center;
-        }
+.big-card h1{
+  font-size:34px;
+  margin-top:5px;
+}
 
-        .green{color:#22c55e}
-        .red{color:#ef4444}
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
 
-        .tx{
-          display:flex;
-          justify-content:space-between;
-          padding:12px;
-          background:white;
-          border-radius:12px;
-          margin-bottom:10px;
-        }
+.small{
+  text-align:center;
+}
 
-        .dark .tx{
-          background:#1e293b;
-        }
+/* COLORS */
+.green{color:#22c55e}
+.red{color:#ef4444}
 
-        .form input, .form select{
-          width:100%;
-          padding:10px;
-          margin-bottom:10px;
-          border-radius:10px;
-          border:1px solid #ddd;
-        }
+/* TRANSACTION */
+.tx{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:10px;
+  background:white;
+}
 
-        button{
-          padding:10px;
-          border:none;
-          border-radius:10px;
-          background:#2563eb;
-          color:white;
-        }
+.dark .tx{
+  background:#1e293b;
+}
 
-        .bottom-nav{
-          position:fixed;
-          bottom:0;
-          left:0;
-          right:0;
-          display:flex;
-          justify-content:space-around;
-          background:white;
-          padding:10px;
-          border-top:1px solid #ddd;
-        }
+/* LEFT SIDE */
+.tx div:first-child{
+  display:flex;
+  flex-direction:column;
+}
 
-        .dark .bottom-nav{
-          background:#1e293b;
-        }
+/* META */
+.meta{
+  font-size:12px;
+  opacity:0.7;
+  margin-top:3px;
+}
 
-        .icon-btn{
-          background:none;
-          font-size:18px;
-        }
-      `}</style>
+/* RIGHT SIDE */
+.tx div:last-child{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* BUTTON */
+button{
+  padding:10px 12px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{
+  opacity:0.85;
+}
+
+/* ICON BUTTON */
+.icon-btn{
+  background:#e2e8f0;
+  color:#111;
+}
+
+.dark .icon-btn{
+  background:#334155;
+  color:white;
+}
+
+/* LOGOUT */
+.logout-btn{
+  background:#ef4444;
+  margin-left:8px;
+}
+
+/* FORM */
+.form input,
+.form select{
+  width:100%;
+  padding:12px;
+  margin-bottom:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+}
+
+.dark .form input,
+.dark .form select{
+  background:#0f172a;
+  color:white;
+  border:1px solid #334155;
+}
+
+/* NAV */
+.bottom-nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:space-around;
+  padding:12px;
+  background:white;
+  border-top:1px solid #eee;
+}
+
+.dark .bottom-nav{
+  background:#1e293b;
+  border-top:1px solid #334155;
+}
+
+/* NAV BUTTON */
+.bottom-nav button{
+  background:none;
+  font-size:20px;
+  color:#111;
+}
+
+.dark .bottom-nav button{
+  color:white;
+}
+
+/* RESPONSIVE */
+@media (max-width: 400px){
+  .big-card h1{
+    font-size:26px;
+  }
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+}
+`}</style>
 
     </div>
   )
@@ -354,7 +468,6 @@ function Login({ setUser }) {
 
   return (
     <div className="login">
-
       <h2>💰 Finance AI</h2>
 
       <input placeholder="Email"
@@ -366,32 +479,6 @@ function Login({ setUser }) {
 
       <button onClick={login}>Login</button>
       <button onClick={register}>Register</button>
-
-      <style>{`
-        .login{
-          display:flex;
-          flex-direction:column;
-          justify-content:center;
-          height:100vh;
-          padding:20px;
-          gap:10px;
-          text-align:center;
-        }
-
-        input{
-          padding:12px;
-          border-radius:10px;
-          border:1px solid #ddd;
-        }
-
-        button{
-          padding:12px;
-          border:none;
-          border-radius:10px;
-          background:#2563eb;
-          color:white;
-        }
-      `}</style>
     </div>
   )
 }
