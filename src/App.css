@@ -1,0 +1,48 @@
+/* src/App.css */
+body {
+  background-color: #f0f2f5;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.app-container {
+  max-width: 450px;
+  width: 100%;
+  margin: 40px 20px;
+  padding: 30px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  color: #333;
+}
+
+h1 {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #1a1a1a;
+  margin-bottom: 30px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 12px;
+  background-color: #4f46e5;
+  color: white;
+  margin: 20px 0;
+  font-size: 1rem;
+}
+
+.btn-save:hover {
+  background-color: #4338ca;
+  transform: translateY(-2px);
+}
