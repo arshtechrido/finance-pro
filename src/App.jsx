@@ -114,7 +114,7 @@ export default function App() {
 
   const COLORS = ['#22c55e', '#ef4444']
 
-  /* ================= LOGIN ================= */
+  /* LOGIN */
   if (!user) return <Login setUser={setUser} />
 
   return (
@@ -209,7 +209,7 @@ export default function App() {
           </div>
         )}
 
-        {/* ADD */}
+        {/* ADD (inchangé) */}
         {page === 'add' && (
           <div className="card form">
 
@@ -234,15 +234,15 @@ export default function App() {
 
       </div>
 
-      {/* BOTTOM NAV */}
+      {/* NAV */}
       <div className="bottom-nav">
         <button onClick={() => setPage('home')}>🏠</button>
         <button onClick={() => setPage('list')}>📊</button>
         <button onClick={() => setPage('add')}>➕</button>
       </div>
 
-      {/* STYLE */}
-     <style>{`
+      {/* STYLE APP */}
+      <style>{`
 .app{
   font-family: 'Inter', sans-serif;
   background:#f4f6fb;
@@ -255,7 +255,6 @@ export default function App() {
   color:#e2e8f0;
 }
 
-/* TOPBAR */
 .topbar{
   display:flex;
   justify-content:space-between;
@@ -263,17 +262,11 @@ export default function App() {
   padding:15px;
 }
 
-.topbar h3{
-  margin:0;
-}
-
-/* CONTENT */
 .content{
   padding:15px;
   padding-bottom:90px;
 }
 
-/* CARD */
 .card{
   background:white;
   padding:18px;
@@ -287,101 +280,45 @@ export default function App() {
   box-shadow:none;
 }
 
-/* BIG CARD */
-.big-card{
-  text-align:center;
-}
+.big-card{text-align:center;}
+.big-card h1{font-size:34px;}
 
-.big-card h1{
-  font-size:34px;
-  margin-top:5px;
-}
-
-/* GRID */
 .grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
 }
 
-.small{
-  text-align:center;
-}
-
-/* COLORS */
 .green{color:#22c55e}
 .red{color:#ef4444}
 
-/* TRANSACTION */
 .tx{
   display:flex;
   justify-content:space-between;
-  align-items:center;
   padding:14px;
   border-radius:14px;
-  margin-bottom:10px;
   background:white;
+  margin-bottom:10px;
 }
 
-.dark .tx{
-  background:#1e293b;
-}
+.dark .tx{background:#1e293b;}
 
-/* LEFT SIDE */
-.tx div:first-child{
-  display:flex;
-  flex-direction:column;
-}
+.meta{font-size:12px;opacity:0.7;}
 
-/* META */
-.meta{
-  font-size:12px;
-  opacity:0.7;
-  margin-top:3px;
-}
-
-/* RIGHT SIDE */
-.tx div:last-child{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-/* BUTTON */
 button{
   padding:10px 12px;
   border:none;
   border-radius:10px;
   background:#2563eb;
   color:white;
-  cursor:pointer;
-  transition:0.2s;
 }
 
-button:hover{
-  opacity:0.85;
-}
+.icon-btn{background:#e2e8f0;color:#111;}
+.dark .icon-btn{background:#334155;color:white;}
 
-/* ICON BUTTON */
-.icon-btn{
-  background:#e2e8f0;
-  color:#111;
-}
+.logout-btn{background:#ef4444;}
 
-.dark .icon-btn{
-  background:#334155;
-  color:white;
-}
-
-/* LOGOUT */
-.logout-btn{
-  background:#ef4444;
-  margin-left:8px;
-}
-
-/* FORM */
-.form input,
-.form select{
+.form input,.form select{
   width:100%;
   padding:12px;
   margin-bottom:12px;
@@ -389,51 +326,29 @@ button:hover{
   border:1px solid #ddd;
 }
 
-.dark .form input,
-.dark .form select{
-  background:#0f172a;
-  color:white;
-  border:1px solid #334155;
-}
-
-/* NAV */
 .bottom-nav{
   position:fixed;
   bottom:0;
-  left:0;
-  right:0;
+  width:100%;
   display:flex;
   justify-content:space-around;
   padding:12px;
   background:white;
-  border-top:1px solid #eee;
 }
 
-.dark .bottom-nav{
-  background:#1e293b;
-  border-top:1px solid #334155;
-}
+.dark .bottom-nav{background:#1e293b;}
 
-/* NAV BUTTON */
 .bottom-nav button{
   background:none;
   font-size:20px;
   color:#111;
 }
 
-.dark .bottom-nav button{
-  color:white;
-}
+.dark .bottom-nav button{color:white;}
 
-/* RESPONSIVE */
-@media (max-width: 400px){
-  .big-card h1{
-    font-size:26px;
-  }
-
-  .grid{
-    grid-template-columns:1fr;
-  }
+@media(max-width:400px){
+  .grid{grid-template-columns:1fr;}
+  .big-card h1{font-size:26px;}
 }
 `}</style>
 
@@ -441,44 +356,80 @@ button:hover{
   )
 }
 
-/* ================= LOGIN ================= */
+/* LOGIN PRO */
 function Login({ setUser }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
   async function login() {
     const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
+      email, password
     })
-
     if (error) return alert(error.message)
     setUser(data.user)
   }
 
   async function register() {
     const { error } = await supabase.auth.signUp({
-      email,
-      password
+      email, password
     })
-
     if (error) return alert(error.message)
     alert("Compte créé 👍")
   }
 
   return (
-    <div className="login">
-      <h2>💰 Finance AI</h2>
+    <div className="login-wrapper">
+      <div className="login-card">
+        <h2>💰 Finance </h2>
+        <p className="subtitle">Gérez vos finances simplement</p>
 
-      <input placeholder="Email"
-        onChange={e => setEmail(e.target.value)} />
+        <input placeholder="Email" onChange={e => setEmail(e.target.value)} />
+        <input type="password" placeholder="Mot de passe" onChange={e => setPassword(e.target.value)} />
 
-      <input type="password"
-        placeholder="Password"
-        onChange={e => setPassword(e.target.value)} />
+        <button onClick={login} className="login-btn">Se connecter</button>
+        <button onClick={register} className="register-btn">Créer un compte</button>
+      </div>
 
-      <button onClick={login}>Login</button>
-      <button onClick={register}>Register</button>
+      <style>{`
+.login-wrapper{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#2563eb,#7c3aed);
+}
+
+.login-card{
+  width:100%;
+  max-width:380px;
+  background:white;
+  padding:30px;
+  border-radius:20px;
+  text-align:center;
+}
+
+.subtitle{margin-bottom:15px;color:#64748b;}
+
+.login-card input{
+  width:100%;
+  padding:14px;
+  margin-bottom:12px;
+  border-radius:12px;
+  border:1px solid #ddd;
+}
+
+.login-btn{
+  width:100%;
+  padding:14px;
+  margin-bottom:10px;
+}
+
+.register-btn{
+  width:100%;
+  padding:12px;
+  background:#eee;
+}
+`}</style>
     </div>
   )
 }
